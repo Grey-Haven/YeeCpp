@@ -1,0 +1,4 @@
+*.host
+Makefile
+CMakeLists.txt
+results/*
