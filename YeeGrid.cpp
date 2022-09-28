@@ -1,45 +1,14 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
+#include <ios>
+#include <iomanip>
+#include <sstream>
 
 class YeeGrid {
 
     public:
-        YeeGrid(int Nx, int Ny, double dx, double dy, double dt, double kappa) {
-            this->Nx = Nx;
-            this->Ny = Ny;
-            this->dx = dx;
-            this->dy = dy;
-            this->dt = dt;
-            this->Ex = new double*[Ny];
-            this->Ey = new double*[Ny];
-            this->Hz = new double*[Ny];
-            this->CHx = new double*[Ny];
-            this->CHy = new double*[Ny];
-            this->CEz = new double*[Ny];
-            for (int j = 0; j < Ny; j++) {
-                this->Ex[j] = new double[Nx];
-                this->Ey[j] = new double[Nx];
-                this->Hz[j] = new double[Nx];
-                this->CHx[j] = new double[Nx];
-                this->CHy[j] = new double[Nx];
-                this->CEz[j] = new double[Nx];
-            }
-            for (int i = 0; i < Nx; i++) {
-                for (int j = 0; j < Ny; j++) {
-                    this->Ex[i][j] = 0;
-                    this->Ey[i][j] = 0;
-                    this->Hz[i][j] = 0;
-                }
-            }
-            this->kappa = kappa;
-            this->tau = dt*10;
-            this->t_0 = 6*this->tau;
-            this->t = 0;
-            this->n = 0;
-            this->pulseI = Nx/4;
-            this->pulseJ = Ny/4;
-        }
+        YeeGrid(int Nx, int Ny, double dx, double dy, double dt, double kappa);
         void step();
         void print();
         double getTime();
@@ -102,16 +71,24 @@ void YeeGrid::print() {
     std::ofstream exFile, eyFile, hzFile;
     std::string nxn = std::to_string(Nx) + "x" + std::to_string(Ny);
     std::string path = "results/" + nxn + "/";
-    // std::cout << path << "\n";
-    exFile.open(path + "Ex_" + std::to_string(n) + ".csv");
-    eyFile.open(path + "Ey_" + std::to_string(n) + ".csv");
-    hzFile.open(path + "Hz_" + std::to_string(n) + ".csv");
+    std::string nstr = std::to_string(n);
+    int numlen = 5;
+    
+    std::ostringstream padder;
+    padder << std::internal << std::setfill('0') << std::setw(numlen) << n;
+    std::string paddedNum = padder.str();
+    exFile.open(path + "Ex_" + paddedNum + ".csv");
+    eyFile.open(path + "Ey_" + paddedNum + ".csv");
+    hzFile.open(path + "Hz_" + paddedNum + ".csv");
     for (int i = 0; i < Nx; i++) {
-        for (int j = 0; j < Ny; j++) {
+        for (int j = 0; j < Ny-1; j++) {
             exFile << std::to_string(Ex[i][j]) + ",";
             eyFile << std::to_string(Ey[i][j]) + ",";
             hzFile << std::to_string(Hz[i][j]) + ",";
         }
+        exFile << std::to_string(Ex[i][Ny-1]);
+        eyFile << std::to_string(Ey[i][Ny-1]);
+        hzFile << std::to_string(Hz[i][Ny-1]);
         exFile << "\n";
         eyFile << "\n";
         hzFile << "\n";
@@ -169,7 +146,7 @@ void YeeGrid::computeCurlHx() {
 
 void YeeGrid::computeCurlHy() {
     for (int j = 0; j < Ny; j++) {
-        CHy[0][j] = (Hz[0][j] - Hz[Nx-1][j])/dy;
+        CHy[0][j] = -(Hz[0][j] - Hz[Nx-1][j])/dy;
         for (int i = 1; i < Nx; i++) {
             CHy[i][j] = -(Hz[i][j] - Hz[i-1][j])/dy;
         }

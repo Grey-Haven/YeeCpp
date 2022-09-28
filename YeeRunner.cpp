@@ -8,11 +8,8 @@
 #include <cmath>
 #include "YeeGrid.h"
 
-void checkSizes(int &N, int &M, int &S, int &nrepeat);
-
 int main(int argc, char *argv[])
 {
-    std::cout << "foo";
     // Physical constants
     const double M_electron = 9.109e-31; // [kg]
     const double Q_electron = 1.602e-19; // [C] (intentionally positive)
@@ -48,11 +45,11 @@ int main(int argc, char *argv[])
     const char eleTag = '-';
     const char ionTag = '+';
 
-    const double T_final = 10; // normalized wrt 1/w_p (plasma period)
+    const double T_final = 25; // normalized wrt 1/w_p (plasma period)
 
-    const int numGridIterations = 5;
+    const int numGridIterations = 1;
 
-    int grids[numGridIterations] = {8,16,32,64,128};
+    int grids[numGridIterations] = {256};
     double heatList[2][numGridIterations];
     double dxs[numGridIterations] = {0};
 
@@ -77,6 +74,7 @@ int main(int argc, char *argv[])
 
         double x[Nx];
         double y[Ny];
+        std::cout << Nx << "x" << Ny << "\n";
         for (int i = 0; i < Nx; i++) {
             x[i] = a_x + i*dx;
             y[i] = a_y + i*dy;
@@ -110,13 +108,11 @@ int main(int argc, char *argv[])
         YeeGrid yeeGrid(Nx, Ny, dx, dy, dt, kappa);
 
         for (int n = 0; n < N_steps; n++) {
-            if (n % 50 == 0) {
-                std::cout << std::to_string(n) << "\n";
+            if (n % 10 == 0) {
                 yeeGrid.print();
             }
             yeeGrid.step();
         }
-        return 0;
     }
         
     return 0;

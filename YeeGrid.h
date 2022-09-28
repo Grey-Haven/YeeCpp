@@ -37,8 +37,8 @@ class YeeGrid {
             this->t_0 = 6*this->tau;
             this->t = 0;
             this->n = 0;
-            this->pulseI = Nx/4;
-            this->pulseJ = Ny/4;
+            this->pulseI = Nx/2;
+            this->pulseJ = Ny/2;
         }
         void step();
         void print();
