@@ -47,9 +47,9 @@ int main(int argc, char *argv[])
 
     const double T_final = 25; // normalized wrt 1/w_p (plasma period)
 
-    const int numGridIterations = 1;
+    const int numGridIterations = 6;
 
-    int grids[numGridIterations] = {256};
+    int grids[numGridIterations] = {8,16,32,64,128,256};
     double heatList[2][numGridIterations];
     double dxs[numGridIterations] = {0};
 
